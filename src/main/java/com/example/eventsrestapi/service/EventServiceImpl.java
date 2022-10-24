@@ -7,38 +7,27 @@ import com.example.eventsrestapi.exception.EventNotExistException;
 import com.example.eventsrestapi.exception.EventsNotFoundException;
 import com.example.eventsrestapi.model.Event;
 import com.example.eventsrestapi.model.SortType;
-import com.example.eventsrestapi.valid.EventValidatorImpl;
-import lombok.SneakyThrows;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.eventsrestapi.model.SortType.*;
-
 @Service
-@Transactional(readOnly = true)
 @Validated
+@RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private static final String EVENT_NOT_EXIST_EXCEPTION_MESSAGE = "Event not found by given id = %s";
     private static final String EVENT_ALREADY_EXIST_EXCEPTION_MESSAGE = "Event already exist by given place = %s and time = %s";
 
     private final EventDao eventDao;
-    private final EventValidatorImpl eventValidatorImpl;
     private final ModelMapper modelMapper;
-
-    public EventServiceImpl(EventDao eventDao, EventValidatorImpl eventValidatorImpl, ModelMapper modelMapper) {
-        this.eventDao = eventDao;
-        this.eventValidatorImpl = eventValidatorImpl;
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public List<EventDto> findAll() {
@@ -72,17 +61,10 @@ public class EventServiceImpl implements EventService {
     }
 
 
-    @Transactional
-    @Override
-    public void register(@Valid EventDto eventDto, BindingResult bindingResult) {
-        /*1 варик
-        eventValidatorImpl.validate(eventDto, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new EventAlreadyTakenException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
-        }
-         */
 
-        //2 варик
+    @Override
+    public void register(@Valid EventDto eventDto) {
+
         if(eventDao.findByPlaceAndTime(eventDto.getPlace(), eventDto.getEventTime()).isPresent())
             throw new EventAlreadyTakenException(EVENT_ALREADY_EXIST_EXCEPTION_MESSAGE.formatted(eventDto.getPlace(), eventDto.getEventTime()));
 
@@ -91,20 +73,20 @@ public class EventServiceImpl implements EventService {
     }
 
 
-    @Transactional
+
     @Override
     public void update(@Valid EventDto eventDto, long id) {
         //1 варик
-        eventDao.findById(id)
-                        .orElseThrow(() -> new EventNotExistException(EVENT_NOT_EXIST_EXCEPTION_MESSAGE.formatted(id)));
-
+        Event event = eventDao.findById(id)
+                .orElseThrow(() -> new EventNotExistException(EVENT_NOT_EXIST_EXCEPTION_MESSAGE.formatted(id)));
+        //comparing
         if(eventDao.findByPlaceAndTime(eventDto.getPlace(), eventDto.getEventTime()).isPresent())
             throw new EventAlreadyTakenException(EVENT_ALREADY_EXIST_EXCEPTION_MESSAGE.formatted(eventDto.getPlace(),eventDto.getEventTime()));
 
         eventDao.update(convertToEvent(eventDto), id);
     }
 
-    @Transactional
+
     @Override
     public void delete(long id) {
         eventDao.findById(id)

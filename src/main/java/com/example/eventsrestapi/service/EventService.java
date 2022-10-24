@@ -18,7 +18,7 @@ public interface EventService {
 
     EventDto findById(long id);
 
-    void register(@Valid EventDto event, BindingResult bindingResult);
+    void register(@Valid EventDto event);
 
     void update(@Valid EventDto eventDto, long id);
 

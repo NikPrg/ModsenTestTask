@@ -20,14 +20,12 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EventException.class)
-    @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorInfoResponse handleRuntimeException(EventException exception) {
         return ErrorInfoResponse.createErrorInfoResponse(exception);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorInfoResponse onConstraintValidationException(ConstraintViolationException exception) {
         return ErrorInfoResponse.createErrorInfoResponse(exception);

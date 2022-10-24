@@ -1,11 +1,13 @@
-package com.example.eventsrestapi.api.controller;
+package com.example.eventsrestapi.api.v1.controller;
 
 import com.example.eventsrestapi.dto.EventDto;
 import com.example.eventsrestapi.dto.EventsResponseDto;
 import com.example.eventsrestapi.model.Event;
 import com.example.eventsrestapi.model.SortType;
 import com.example.eventsrestapi.service.EventService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -18,25 +20,17 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/events")
+@RequiredArgsConstructor
+@RequestMapping("/public/api/v1/events")
 public class EventController {
     private final EventService eventService;
-
-
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
-    }
-
-
-
+    //  @PageableDefault
     @GetMapping
     public EventsResponseDto getEvents(
             @RequestParam(value = "sort_by_subject", required = false) boolean sortBySubject,
             @RequestParam(value = "sort_by_organizer", required = false) boolean sortByOrganizer,
             @RequestParam(value = "sort_by_event_time", required = false) boolean sortByEventTime) {
-
         List<EventDto> list;
-
         if (sortBySubject)
             list = eventService.findAll(SortType.SUBJECT);
         else if (sortByOrganizer)
@@ -48,15 +42,16 @@ public class EventController {
 
         return new EventsResponseDto(list);
     }
-
+    //log
     @GetMapping("{id}")
-    public ResponseEntity<EventDto> getEventById(@PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(eventService.findById(id));
+    @ResponseStatus(HttpStatus.OK)
+    public EventDto getEventById(@PathVariable("id") long id) {
+        return eventService.findById(id);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<HttpStatus> registerEvent(@RequestBody EventDto eventDto, BindingResult bindingResult) {
-        eventService.register(eventDto, bindingResult);
+    public ResponseEntity<HttpStatus> registerEvent(@RequestBody EventDto eventDto) {
+        eventService.register(eventDto);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
