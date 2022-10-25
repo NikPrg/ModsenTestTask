@@ -54,7 +54,7 @@ public class HibernateConfig {
         return sessionFactory;
     }
 
-    @Bean                //теперь спринг сам будет открывать и закрывать транзакции
+    @Bean
     public HibernateTransactionManager transactionManager() {
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
         transactionManager.setSessionFactory(sessionFactory().getObject());
@@ -65,7 +65,6 @@ public class HibernateConfig {
         Properties hibernateProperties = new Properties();
         hibernateProperties.put("hibernate.dialect", DIALECT);
         hibernateProperties.put("hibernate.show_sql", SHOW_SQL);
-
         return hibernateProperties;
     }
 }

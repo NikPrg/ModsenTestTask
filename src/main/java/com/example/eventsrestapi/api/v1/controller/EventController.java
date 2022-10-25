@@ -2,72 +2,69 @@ package com.example.eventsrestapi.api.v1.controller;
 
 import com.example.eventsrestapi.dto.EventDto;
 import com.example.eventsrestapi.dto.EventsResponseDto;
-import com.example.eventsrestapi.model.Event;
-import com.example.eventsrestapi.model.SortType;
 import com.example.eventsrestapi.service.EventService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.web.PageableDefault;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/public/api/v1/events")
 public class EventController {
     private final EventService eventService;
-    //  @PageableDefault
+
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public EventsResponseDto getEvents(
             @RequestParam(value = "sort_by_subject", required = false) boolean sortBySubject,
             @RequestParam(value = "sort_by_organizer", required = false) boolean sortByOrganizer,
             @RequestParam(value = "sort_by_event_time", required = false) boolean sortByEventTime) {
-        List<EventDto> list;
-        if (sortBySubject)
-            list = eventService.findAll(SortType.SUBJECT);
-        else if (sortByOrganizer)
-            list = eventService.findAll(SortType.ORGANIZER);
-        else if (sortByEventTime)
-            list = eventService.findAll(SortType.TIME);
-        else
-            list = eventService.findAll();
+        log.info("Received a request to get all events");
+        List<String> sortList = new ArrayList<>();
+        List<EventDto> eventDtos;
 
-        return new EventsResponseDto(list);
+        if (sortBySubject) sortList.add("subject");
+        if (sortByOrganizer) sortList.add("organizer");
+        if (sortByEventTime) sortList.add("event_time");
+
+
+        if (sortList.isEmpty()) eventDtos = eventService.findAll();
+        else eventDtos = eventService.findAll(sortList);
+        return new EventsResponseDto(eventDtos);
     }
-    //log
+
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public EventDto getEventById(@PathVariable("id") long id) {
+        log.info("Received a request to get event by id {}", id);
         return eventService.findById(id);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<HttpStatus> registerEvent(@RequestBody EventDto eventDto) {
-        eventService.register(eventDto);
-        return ResponseEntity.ok(HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventDto registerEvent(@RequestBody EventDto eventDto) {
+        log.info("Received request to register an event: {}", eventDto);
+        return eventService.register(eventDto);
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<HttpStatus> updateEvent(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateEvent(
             @PathVariable("id") long id,
             @RequestBody EventDto eventDto) {
+        log.info("Received request to update an event: {} with id: {}", eventDto, id);
         eventService.update(eventDto, id);
-        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<HttpStatus> deleteEvent(@PathVariable("id") long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEvent(@PathVariable("id") long id) {
+        log.info("Received a request to delete event by id {}", id);
         eventService.delete(id);
-        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
-
-
 }

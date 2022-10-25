@@ -2,18 +2,14 @@ package com.example.eventsrestapi.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class EventDto{
+public class EventDto {
     @NotBlank(message = "This field should not be empty!")
     @Size(max = 50, message = "The size should be less than 50 characters")
     private String subject;
@@ -28,7 +24,6 @@ public class EventDto{
     @NotBlank(message = "This field should not be empty!")
     @Size(max = 30, message = "The size should be less than 30 characters")
     private String place;
-
 
     private LocalDateTime eventTime;
 }

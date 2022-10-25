@@ -1,12 +1,10 @@
 package com.example.eventsrestapi.api;
 
 import com.example.eventsrestapi.exception.EventException;
-import com.example.eventsrestapi.exception.EventNotExistException;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -30,7 +28,6 @@ public class GlobalExceptionHandler {
     public ErrorInfoResponse onConstraintValidationException(ConstraintViolationException exception) {
         return ErrorInfoResponse.createErrorInfoResponse(exception);
     }
-
 
     @Value
     @Builder
@@ -64,11 +61,9 @@ public class GlobalExceptionHandler {
     @Value
     @Builder
     private static class ErrorInfo {
-
         String message;
         String field;
         String timestamp;
-
     }
 }
 

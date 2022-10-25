@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: admin
       PGDATA: /data/postgres
     volumes:
-      - postgres:/data/postgres
+      - ./db-data/:/var/lib/postgresql/data/
     ports:
       - '5432:5432'
     networks:
@@ -23,7 +23,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: password123
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
-      - pgadmin:/var/lib/pgadmin
+      - ./pgadmin-data/:/var/lib/pgadmin/
     ports:
       - "5050:80"
     networks:
@@ -42,13 +42,3 @@ services:
 
 networks:
   event-network:
-
-volumes:
-  postgres:
-  pgadmin:
-
-
-
-
-
-

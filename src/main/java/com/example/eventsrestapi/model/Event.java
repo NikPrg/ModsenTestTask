@@ -12,6 +12,11 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Table(name = "events")
+@org.hibernate.annotations.NamedNativeQueries({
+        @org.hibernate.annotations.NamedNativeQuery(name = "SORT_BY_ONE_PARAMETER", query = "SELECT * FROM events ORDER BY ?", resultClass = Event.class),
+        @org.hibernate.annotations.NamedNativeQuery(name = "SORT_BY_TWO_PARAMETERS", query = "SELECT * FROM events ORDER BY ?, ?", resultClass = Event.class),
+        @org.hibernate.annotations.NamedNativeQuery(name = "SORT_BY_THREE_PARAMETERS", query = "SELECT * FROM events ORDER BY ?, ?, ?", resultClass = Event.class)
+})
 public class Event {
 
     @Id
@@ -36,11 +41,5 @@ public class Event {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-
-
-
-
-
 
 }
