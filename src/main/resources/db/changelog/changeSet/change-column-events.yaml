@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: change-column-events
-      author: Nikita
-      changes:
-        - renameColumn:
-            tableName: events
-            newColumnName: organizer
-            oldColumnName: organizator
