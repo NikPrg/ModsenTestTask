@@ -30,7 +30,7 @@ public class EventController {
 
         if (sortBySubject) sortList.add("subject");
         if (sortByOrganizer) sortList.add("organizer");
-        if (sortByEventTime) sortList.add("event_time");
+        if (sortByEventTime) sortList.add("eventTime");
 
 
         if (sortList.isEmpty()) eventDtos = eventService.findAll();

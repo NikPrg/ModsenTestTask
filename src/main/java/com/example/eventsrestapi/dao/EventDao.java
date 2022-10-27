@@ -4,9 +4,10 @@ import com.example.eventsrestapi.exception.EventNotExistException;
 import com.example.eventsrestapi.model.Event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
+import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -31,23 +32,11 @@ public class EventDao {
 
     public List<Event> findAll(List<String> list) {
         Session currentSession = sessionFactory.openSession();
-
-        List<Event> eventList;
-        if (list.size() == 1) {
-            eventList = currentSession.createNamedQuery("SORT_BY_ONE_PARAMETER", Event.class)
-                    .setParameter(1, list.get(0)).getResultList();
-        } else if (list.size() == 2) {
-            eventList = currentSession.createNamedQuery("SORT_BY_TWO_PARAMETERS", Event.class)
-                    .setParameter(1, list.get(0))
-                    .setParameter(2, list.get(1)).getResultList();
-        } else {
-            eventList = currentSession.createNamedQuery("SORT_BY_THREE_PARAMETERS", Event.class)
-                    .setParameter(1, list.get(0))
-                    .setParameter(2, list.get(1))
-                    .setParameter(3, list.get(2)).getResultList();
+        Criteria criteria = currentSession.createCriteria(Event.class);
+        for (String s : list) {
+            criteria.addOrder(Order.asc(s));
         }
-
-        return eventList;
+        return (List<Event>) criteria.list();
     }
 
     public Optional<Event> findById(long id) {
