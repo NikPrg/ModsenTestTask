@@ -40,7 +40,7 @@ public class EventController {
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public EventDto getEventById(@PathVariable("id") long id) {
+    public EventDto  getEventById(@PathVariable("id") long id) {
         log.info("Received a request to get event by id {}", id);
         return eventService.findById(id);
     }
@@ -51,6 +51,7 @@ public class EventController {
         log.info("Received request to register an event: {}", eventDto);
         return eventService.register(eventDto);
     }
+
 
     @PatchMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -67,4 +68,12 @@ public class EventController {
         log.info("Received a request to delete event by id {}", id);
         eventService.delete(id);
     }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEvent() {
+        log.info("Received a request to delete all events");
+        eventService.delete();
+    }
+
 }

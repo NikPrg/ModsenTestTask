@@ -75,5 +75,11 @@ public class EventDao {
             throw new EventNotExistException(EVENT_NOT_EXIST_EXCEPTION_MESSAGE.formatted(id));
         }
     }
+
+    public void delete() {
+        Session currentSession = sessionFactory.getCurrentSession();
+        currentSession.createQuery("DELETE from Event").executeUpdate();
+    }
+
 }
 

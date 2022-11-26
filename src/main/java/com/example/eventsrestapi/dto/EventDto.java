@@ -1,15 +1,18 @@
 package com.example.eventsrestapi.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class EventDto {
+
     @NotBlank(message = "This field should not be empty!")
     @Size(max = 50, message = "The size should be less than 50 characters")
     private String subject;

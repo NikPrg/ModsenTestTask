@@ -13,9 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import javax.validation.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -73,16 +74,25 @@ public class EventServiceImpl implements EventService {
         if (eventDao.findById(id).isEmpty())
             throw new EventNotExistException(EVENT_NOT_EXIST_EXCEPTION_MESSAGE.formatted(id));
 
-        if (eventDao.findByPlaceAndTime(eventDto.getPlace(), eventDto.getEventTime()).isPresent())
+        Optional<Event> event = eventDao.findByPlaceAndTime(eventDto.getPlace(), eventDto.getEventTime());
+
+        if (event.isPresent() && event.get().getId()!=id)
             throw new EventAlreadyTakenException(EVENT_ALREADY_EXIST_EXCEPTION_MESSAGE.formatted(eventDto.getPlace(), eventDto.getEventTime()));
 
         eventDao.update(convertToEvent(eventDto), id);
+
     }
 
     @Override
     public void delete(long id) {
         log.info("Trying to delete event by given id: {}", id);
         eventDao.delete(id);
+    }
+
+    @Override
+    public void delete() {
+        log.info("Trying to delete all events");
+        eventDao.delete();
     }
 
     private EventDto convertToEventDto(Event event) {

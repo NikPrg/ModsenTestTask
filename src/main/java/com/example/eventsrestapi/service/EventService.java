@@ -2,7 +2,7 @@ package com.example.eventsrestapi.service;
 
 import com.example.eventsrestapi.dto.EventDto;
 
-import javax.validation.Valid;
+import javax.validation.*;
 import java.util.List;
 
 public interface EventService {
@@ -18,5 +18,7 @@ public interface EventService {
     void update(@Valid EventDto eventDto, long id);
 
     void delete(long id);
+
+    void delete();
 
 }
